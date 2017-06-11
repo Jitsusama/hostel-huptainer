@@ -38,7 +38,7 @@ def test_returns_error_when_certbot_hostname_is_not_passed():
 
 @pytest.mark.skip('to be tackled later')
 def test_prints_usage_when_help_argument_passed():
-    stdout, _ = subprocess.check_output(
+    stdout = subprocess.check_output(
         args=['hostel-huptainer', '--help'])
 
     assert 'hostel-huptainer' in stdout.decode()
