@@ -36,11 +36,11 @@ node {
 
                 echo "Run py.test Test Suite"
                 try {
-                    sh "py.test --pylama --junit-xml py27-test-results.xml --junit-prefix py27 --cov-report xml --cov"
+                    sh "py.test --pylama --junit-xml py27-test-results.xml --junit-prefix py27 --cov-report xml:py27-coverage.xml --cov"
                 }
                 finally {
                     junit "py27-test-results.xml"
-                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'py27-coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: true])
                 }
             }
         }, py36: {
@@ -54,11 +54,11 @@ node {
                 echo "Run py.test Test Suite"
                 xmlFile = "py36-test-results.xml"
                 try {
-                    sh "py.test --pylama --junit-xml py36-test-results.xml --junit-prefix py36 --cov-report xml --cov"
+                    sh "py.test --pylama --junit-xml py36-test-results.xml --junit-prefix py36 --cov-report xml:py36-coverage.xml --cov"
                 }
                 finally {
                     junit "py36-test-results.xml"
-                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'py36-coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: true])
                 }
             }
         }
