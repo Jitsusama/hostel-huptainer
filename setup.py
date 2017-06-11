@@ -6,9 +6,8 @@ try:
 except ImportError:
     import os
     import sys
-    path = os.path.dirname(__file__)
+    path = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, '{}/source'.format(path))
-    print(sys.path)
     from hostel_huptainer import __version__
 
 setup(
