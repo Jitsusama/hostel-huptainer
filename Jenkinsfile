@@ -36,10 +36,11 @@ node {
 
                 echo "Run py.test Test Suite"
                 try {
-                    sh "py.test --pylama --junit-xml py27-test-results.xml --junit-prefix py27"
+                    sh "py.test --pylama --junit-xml py27-test-results.xml --junit-prefix py27 --cov-report xml --cov"
                 }
                 finally {
                     junit "py27-test-results.xml"
+                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
                 }
             }
         }, py36: {
@@ -53,10 +54,11 @@ node {
                 echo "Run py.test Test Suite"
                 xmlFile = "py36-test-results.xml"
                 try {
-                    sh "py.test --pylama --junit-xml py36-test-results.xml --junit-prefix py36"
+                    sh "py.test --pylama --junit-xml py36-test-results.xml --junit-prefix py36 --cov-report xml --cov"
                 }
                 finally {
                     junit "py36-test-results.xml"
+                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
                 }
             }
         }
