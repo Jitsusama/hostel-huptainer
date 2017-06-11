@@ -2,5 +2,7 @@
 
 
 class Environment(object):
+    """Searches ``environment`` for expected variables and stores them."""
+
     def __init__(self, environment):
         pass

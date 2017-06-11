@@ -6,6 +6,7 @@ from hostel_huptainer.environment import Environment
 
 
 def main():
+    """Main program logic."""
     Environment(os.environ)
 
 
