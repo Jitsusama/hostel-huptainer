@@ -1,7 +1,14 @@
 """PIP Project Installation Program."""
 
 from setuptools import setup, find_packages
-from hostel_huptainer import __version__
+try:
+    from hostel_huptainer import __version__
+except ImportError:
+    import os
+    import sys
+    path = os.path.dirname(__file__)
+    sys.path.insert(0, '{}/source'.format(path))
+    from hostel_huptainer import __version__
 
 setup(
     name='hostel-huptainer',
@@ -30,7 +37,8 @@ setup(
         'Topic :: System :: Systems Administration',
         'Topic :: Utilities',
     ],
-    packages=find_packages(),
+    packages=find_packages('source'),
+    package_dir={'': 'source'},
     entry_points={
         'console_scripts': [
             'hostel-huptainer = hostel_huptainer.__main__:main'
