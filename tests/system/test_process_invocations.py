@@ -31,7 +31,7 @@ def test_returns_error_when_certbot_hostname_is_not_passed():
     try:
         subprocess.check_output(args=['hostel-huptainer'])
     except subprocess.CalledProcessError as exception:
-        assert 'CERTBOT_HOSTNAME' in exception.output
+        assert 'CERTBOT_HOSTNAME' in exception.output.decode()
     else:
         pytest.fail('hostel-huptainer did not raise an error.')
 
@@ -41,7 +41,7 @@ def test_prints_usage_when_help_argument_passed():
     stdout, _ = subprocess.check_output(
         args=['hostel-huptainer', '--help'])
 
-    assert 'hostel-huptainer' in stdout
+    assert 'hostel-huptainer' in stdout.decode()
 
 
 @pytest.mark.skip('to be tackled later')
