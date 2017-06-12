@@ -1,6 +1,7 @@
 """Tests the hostel_huptainer.__main__ module."""
 
 import pytest
+from hostel_huptainer.errors import InputError
 
 from hostel_huptainer.__main__ import main
 
@@ -17,9 +18,16 @@ def test_passes_os_environ_to_environment(mocker):
     mock_environment.assert_called_once_with(stub_environ)
 
 
-@pytest.mark.skip('to be tackled later')
-def test_properly_calls_sys_exit_on_invalid_input_error():
-    pytest.fail('test still is not written')
+def test_properly_calls_sys_exit_on_input_error(mocker):
+    mocker.patch('hostel_huptainer.__main__.Environment',
+                 side_effect=InputError)
+
+    mock_exit = mocker.patch(
+        'hostel_huptainer.__main__.sys.exit')
+
+    main()
+
+    mock_exit.assert_called_once_with(1)
 
 
 @pytest.mark.skip('to be tackled later')

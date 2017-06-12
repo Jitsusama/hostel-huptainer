@@ -1,13 +1,18 @@
 """Program bootstrap."""
 
 import os
+import sys
 
 from hostel_huptainer.environment import Environment
+from hostel_huptainer.errors import InputError
 
 
 def main():
     """Main program logic."""
-    Environment(os.environ)
+    try:
+        Environment(os.environ)
+    except InputError:
+        sys.exit(1)
 
 
 if __name__ == '__main__':
