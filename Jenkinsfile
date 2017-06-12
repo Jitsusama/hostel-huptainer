@@ -6,7 +6,7 @@ node {
         checkout scm
 
         echo "Remove Old Run Data"
-        sh "rm -r *test-results.xml || exit 0"
+        sh "rm -r *test-results.xml *coverage.xml build dist *.egg-info || exit 0"
 
         echo "Create Python 2.7 Build Environment"
         python_build = docker.build("python:2.7-hostel-env", "-f ci-cd/py27-env/Dockerfile .")
