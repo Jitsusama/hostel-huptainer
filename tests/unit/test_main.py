@@ -6,9 +6,14 @@ from hostel_huptainer.errors import InputError
 from hostel_huptainer.__main__ import main
 
 
-def test_passes_os_environ_to_environment(mocker):
+@pytest.mark.parametrize('environ', [
+    {'thing': 'one'}, {'thing': 'two'}])
+def test_passes_os_environ_to_environment(mocker, environ):
+    mocker.patch('hostel_huptainer.__main__.sys')
+    mocker.patch('hostel_huptainer.__main__.InputError')
     stub_environ = mocker.patch(
-        'hostel_huptainer.__main__.os.environ')
+        'hostel_huptainer.__main__.os.environ',
+        value=environ)
 
     mock_environment = mocker.patch(
         'hostel_huptainer.__main__.Environment')
@@ -30,6 +35,16 @@ def test_properly_calls_sys_exit_on_input_error(mocker):
     mock_exit.assert_called_once_with(1)
 
 
-@pytest.mark.skip('to be tackled later')
-def test_calls_stdout_with_invalid_input_message_when_raised():
-    pytest.fail('test still is not written')
+@pytest.mark.parametrize('message', ['Danger!', ''])
+def test_calls_stdout_with_input_error_message_when_raised(
+        mocker, message):
+    mocker.patch('hostel_huptainer.__main__.sys')
+    mocker.patch('hostel_huptainer.__main__.Environment',
+                 side_effect=InputError(message))
+
+    mock_stdout = mocker.patch(
+        'hostel_huptainer.__main__.stdout')
+
+    main()
+
+    mock_stdout.assert_called_once_with(message)
