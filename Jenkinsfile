@@ -34,12 +34,21 @@ node {
                 echo "Install Wheel Artifact"
                 sh "pip install dist/*.whl"
 
-                echo "Run py.test Test Suite"
                 try {
-                    sh "coverage run -p -m pytest --pylama --junit-xml py27-test-results.xml --junit-prefix py27"
+                    echo "Run py.test Test Suite"
+                    sh "py.test --pylama --junit-xml py27-test-results.xml --junit-prefix py27"
                 }
                 catch (e) {}
                 junit "py27-test-results.xml"
+            }
+            python_27.inside {
+                echo "Install in Editable Mode"
+                sh "pip install -e ."
+                try {
+                    echo "Obtain Code Coverage for Unit Tests"
+                    sh "coverage run -p --source source/hostel_huptainer -m pytest tests/unit"
+                }
+                catch (e) {}
             }
         }, py36: {
             echo "Create Python 3.6 Environment"
@@ -49,18 +58,26 @@ node {
                 echo "Install Wheel Artifact"
                 sh "pip install dist/*.whl"
 
-                echo "Run py.test Test Suite"
                 xmlFile = "py36-test-results.xml"
                 try {
-                    sh "coverage run -p -m pytest --pylama --junit-xml py36-test-results.xml --junit-prefix py36"
+                    echo "Run py.test Test Suite"
+                    sh "py.test --pylama --junit-xml py36-test-results.xml --junit-prefix py36"
                 }
                 catch (e) {}
                 junit "py36-test-results.xml"
             }
+            python_36.inside {
+                echo "Install in Editable Mode"
+                sh "pip install -e ."
+                try {
+                    echo "Obtain Code Coverage for Unit Tests"
+                    sh "coverage run -p --source source/hostel_huptainer -m pytest tests/unit"
+                }
+                catch (e) {}
+            }
         }
         echo "Check Code Coverage"
         python_build.inside {
-            sh "pip install dist/*.whl"
             sh "coverage combine"
             sh "coverage xml"
             step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: true])
