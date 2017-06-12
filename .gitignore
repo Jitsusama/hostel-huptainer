@@ -6,8 +6,9 @@ __pycache__
 build/
 dist/
 *.egg-info/
-.coverage
+.coverage*
 .tox/
 
-# Ignore PyCharm Configuration
+# Editor Configuration/Data Files
 .idea/
+*.swp
