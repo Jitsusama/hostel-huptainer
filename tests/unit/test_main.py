@@ -24,6 +24,7 @@ class TestEnvironmentInteractions(object):
         mock_environment.assert_called_once_with(stub_environ)
 
     def test_properly_calls_sys_exit_on_input_error(self, mocker):
+        mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError)
@@ -36,6 +37,7 @@ class TestEnvironmentInteractions(object):
     @pytest.mark.parametrize('message', ['Danger!', ''])
     def test_calls_stderr_with_input_error_message_when_raised(
             self, mocker, message):
+        mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
@@ -52,6 +54,7 @@ class TestArgumentsInteractions(object):
         ['hostel_huptainer', '--help'],
         ['hostel_huptainer', 'luxembourg']])
     def test_passes_sys_argv_to_arguments(self, mocker, argv):
+        mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.Environment')
         stub_argv = mocker.patch(
             'hostel_huptainer.__main__.sys.argv',
