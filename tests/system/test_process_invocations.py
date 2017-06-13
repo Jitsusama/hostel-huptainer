@@ -2,30 +2,10 @@
 
 import os
 import subprocess
-
-import docker
 import pytest
 from hostel_huptainer import __version__
 
-PYTHON_HUPPABLE_CMD_ARGS = ['python2', '-c', '''
-import signal
-def h(*args): raise Exception('HUPPED')
-signal.signal(signal.SIGHUP, h)
-while True: pass''']
-
-
-@pytest.fixture
-def python_container():
-    client = docker.client.DockerClient()
-    image = client.images.get('python:2.7')
-    container = client.containers.create(
-        image=image, command=PYTHON_HUPPABLE_CMD_ARGS,
-        labels={'org.eff.certbot.cert_cns': 'testhost.testdomain.tld'})
-
-    yield container
-
-    container.stop(timeout=1)
-    container.remove()
+# ATTENTION: See conftest.py for py.test fixtures.
 
 
 def test_returns_error_when_certbot_hostname_is_not_passed():
