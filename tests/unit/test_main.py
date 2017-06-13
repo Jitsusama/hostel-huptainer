@@ -16,7 +16,6 @@ class TestEnvironmentInteractions(object):
         stub_environ = mocker.patch(
             'hostel_huptainer.__main__.os.environ',
             value=environ)
-
         mock_environment = mocker.patch(
             'hostel_huptainer.__main__.Environment')
 
@@ -28,28 +27,24 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError)
-
-        mock_exit = mocker.patch(
-            'hostel_huptainer.__main__.sys.exit')
+        mock_exit = mocker.patch('hostel_huptainer.__main__.sys.exit')
 
         main()
 
         mock_exit.assert_called_once_with(1)
 
     @pytest.mark.parametrize('message', ['Danger!', ''])
-    def test_calls_stdout_with_input_error_message_when_raised(
+    def test_calls_stderr_with_input_error_message_when_raised(
             self, mocker, message):
         mocker.patch('hostel_huptainer.__main__.sys')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError(message))
-
-        mock_stdout = mocker.patch(
-            'hostel_huptainer.__main__.stdout')
+        mock_stderr = mocker.patch('hostel_huptainer.__main__.stderr')
 
         main()
 
-        mock_stdout.assert_called_once_with(message)
+        mock_stderr.assert_called_once_with(message)
 
 
 class TestArgumentsInteractions(object):
@@ -61,7 +56,6 @@ class TestArgumentsInteractions(object):
         stub_argv = mocker.patch(
             'hostel_huptainer.__main__.sys.argv',
             value=argv)
-
         mock_arguments = mocker.patch(
             'hostel_huptainer.__main__.Arguments')
 
