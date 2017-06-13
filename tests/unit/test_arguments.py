@@ -2,7 +2,6 @@
 
 import pytest
 
-from hostel_huptainer import __version__
 from hostel_huptainer.arguments import Arguments
 
 
