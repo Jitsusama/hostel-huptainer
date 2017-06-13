@@ -8,7 +8,7 @@ from hostel_huptainer.arguments import Arguments
 def test_passes_usage_information_to_argumentparser(mocker):
     mock_parser = mocker.patch('hostel_huptainer.arguments.ArgumentParser')
 
-    Arguments([])
+    Arguments(['hostel-huptainer'])
 
     mock_parser.assert_called_once_with(
         description=mocker.ANY, epilog=mocker.ANY)
@@ -36,7 +36,7 @@ def test_passes_version_details_to_add_argument_before_parsing(
         'hostel_huptainer.arguments.__version__', value=version)
     mock_parser = mocker.patch('hostel_huptainer.arguments.ArgumentParser')
 
-    Arguments([])
+    Arguments(['hostel-huptainer'])
 
     mock_parser.assert_has_calls([
         mocker.call().add_argument(
