@@ -36,7 +36,7 @@ node {
 
                 try {
                     echo "Run py.test Test Suite"
-                    sh "py.test --pylama --junit-xml py27-test-results.xml --junit-prefix py27"
+                    sh "py.test --cache-clear --pylama --junit-xml py27-test-results.xml --junit-prefix py27"
                 }
                 catch (e) {}
                 junit "py27-test-results.xml"
@@ -61,7 +61,7 @@ node {
                 xmlFile = "py36-test-results.xml"
                 try {
                     echo "Run py.test Test Suite"
-                    sh "py.test --pylama --junit-xml py36-test-results.xml --junit-prefix py36"
+                    sh "py.test --cache-clear --pylama --junit-xml py36-test-results.xml --junit-prefix py36"
                 }
                 catch (e) {}
                 junit "py36-test-results.xml"
