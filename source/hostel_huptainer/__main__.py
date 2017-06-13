@@ -11,9 +11,9 @@ from hostel_huptainer.output import stderr
 
 def main():
     """Main program logic."""
+    Arguments(sys.argv)
     try:
         Environment(os.environ)
-        Arguments(sys.argv)
     except InputError as error:
         stderr(str(error))
         sys.exit(1)

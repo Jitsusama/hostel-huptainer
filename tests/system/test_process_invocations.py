@@ -29,7 +29,9 @@ def python_container():
 
 def test_returns_error_when_certbot_hostname_is_not_passed():
     try:
-        subprocess.check_output(args=['hostel-huptainer'])
+        subprocess.check_output(
+            args=['hostel-huptainer'],
+            stdin=None, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as exception:
         assert 'CERTBOT_HOSTNAME' in exception.output.decode()
     else:
