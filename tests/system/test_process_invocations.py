@@ -5,6 +5,7 @@ import subprocess
 
 import docker
 import pytest
+from hostel_huptainer import __version__
 
 PYTHON_HUPPABLE_CMD_ARGS = ['python2', '-c', '''
 import signal
@@ -43,6 +44,16 @@ def test_prints_usage_when_help_argument_passed():
         args=['hostel-huptainer', '--help'])
 
     assert 'hostel-huptainer' in stdout.decode()
+
+
+def test_prints_version_when_version_argument_passed():
+    # py2.7 sends version to stderr instead of stdout, so we're
+    # redirecting stderr to stdout to allow this test to pass.
+    stdout = subprocess.check_output(
+        args=['hostel-huptainer', '--version'],
+        stderr=subprocess.STDOUT)
+
+    assert __version__ in stdout.decode()
 
 
 @pytest.mark.skip('to be tackled later')

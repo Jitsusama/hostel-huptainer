@@ -1,6 +1,7 @@
 """Process command line arguments."""
 
 from argparse import ArgumentParser
+from hostel_huptainer import __version__
 
 
 class Arguments(object):
@@ -17,4 +18,6 @@ environment variable in order to run. When this is called in connection
 with the certbot program, this variable should automatically be set.'''
 
         parser = ArgumentParser(description=description, epilog=epilog)
+        parser.add_argument(
+            '-v', '--version', action='version', version=__version__)
         parser.parse_args(argument_vector[1:])
