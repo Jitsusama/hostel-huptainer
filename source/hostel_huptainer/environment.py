@@ -10,4 +10,5 @@ class Environment(object):
         self.hostname = environment.get('CERTBOT_HOSTNAME')
 
         if not self.hostname:
-            raise InputError('CERTBOT_HOSTNAME environment variable is missing.')
+            raise InputError(
+                'CERTBOT_HOSTNAME environment variable is missing.')
