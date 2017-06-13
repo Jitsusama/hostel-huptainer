@@ -9,7 +9,7 @@ node {
         sh "rm -r *test-results.xml *coverage.xml build dist *.egg-info || exit 0"
 
         echo "Create Python 2.7 Build Environment"
-        python_build = docker.build("python:2.7-hostel-env", "-f ci-cd/py27-env/Dockerfile .")
+        python_build = docker.build("python:2.7-hostel-env", "-f tests/envs/python2.7/Dockerfile .")
     }
 
     stage("Build Python Artifacts") {
@@ -28,7 +28,7 @@ node {
     stage("Run Python Test Suite") {
         parallel py27: {
             echo "Create Python 2.7 Environment"
-            python_27 = docker.build("python:2.7-hostel-env", "-f ci-cd/py27-env/Dockerfile .")
+            python_27 = docker.build("python:2.7-hostel-env", "-f tests/envs/python2.7/Dockerfile .")
 
             python_27.inside {
                 echo "Install Wheel Artifact"
@@ -52,7 +52,7 @@ node {
             }
         }, py36: {
             echo "Create Python 3.6 Environment"
-            python_36 = docker.build("python:3.6-hostel-env", "-f ci-cd/py36-env/Dockerfile .")
+            python_36 = docker.build("python:3.6-hostel-env", "-f tests/envs/python3.6/Dockerfile .")
 
             python_36.inside {
                 echo "Install Wheel Artifact"
