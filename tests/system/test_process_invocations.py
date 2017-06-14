@@ -36,7 +36,6 @@ def test_prints_version_when_version_argument_passed():
     assert __version__ in stdout.decode()
 
 
-@pytest.mark.skip('to be tackled later')
 def test_restarts_container_with_matching_label(
         python_container):
     python_container.start()
