@@ -29,23 +29,25 @@ class TestEnvironmentInteractions(object):
 
         mock_environment.assert_called_once_with(stub_environ)
 
-    def test_properly_calls_sys_exit_on_input_error(self, mocker):
+    def test_properly_calls_abnormal_exit_on_input_error(self, mocker):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError)
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
-        mock_exit = mocker.patch('hostel_huptainer.__main__.sys.exit')
+        mock_abnormal_exit = mocker.patch(
+            'hostel_huptainer.__main__.abnormal_exit')
 
         main()
 
-        mock_exit.assert_called_once_with(1)
+        mock_abnormal_exit.assert_called_once()
 
     @pytest.mark.parametrize('message', ['Danger!', ''])
     def test_calls_error_message_with_input_error_message_when_raised(
             self, mocker, message):
         mocker.patch('hostel_huptainer.__main__.os')
-        mocker.patch('hostel_huptainer.__main__.sys')
+        mocker.patch('hostel_huptainer.__main__.sys.argv')
+        mocker.patch('hostel_huptainer.__main__.abnormal_exit')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError(message))
@@ -92,23 +94,25 @@ class TestMatchingContainersInteractions(object):
 
         mock_matches.assert_called_once_with(hostname)
 
-    def test_properly_calls_sys_exit_on_raised_error(self, mocker):
+    def test_properly_calls_abnormal_exit_on_raised_error(self, mocker):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
                      side_effect=NoMatchesError)
-        mock_exit = mocker.patch('hostel_huptainer.__main__.sys.exit')
+        mock_abnormal_exit = mocker.patch(
+            'hostel_huptainer.__main__.abnormal_exit')
 
         main()
 
-        mock_exit.assert_called_once_with(1)
+        mock_abnormal_exit.assert_called_once()
 
     @pytest.mark.parametrize('message', ['Danger!', ''])
     def test_calls_error_message_with_raised_error_text(
             self, mocker, message):
         mocker.patch('hostel_huptainer.__main__.os')
-        mocker.patch('hostel_huptainer.__main__.sys')
+        mocker.patch('hostel_huptainer.__main__.sys.argv')
+        mocker.patch('hostel_huptainer.__main__.abnormal_exit')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',

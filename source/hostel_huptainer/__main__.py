@@ -7,7 +7,7 @@ from hostel_huptainer.arguments import Arguments
 from hostel_huptainer.containers import MatchingContainers
 from hostel_huptainer.environment import Environment
 from hostel_huptainer.errors import InputError, NoMatchesError
-from hostel_huptainer.system import error_message
+from hostel_huptainer.system import abnormal_exit, error_message
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
 
 def _handle_error(error):
     error_message(str(error))
-    sys.exit(1)
+    abnormal_exit()
 
 
 if __name__ == '__main__':

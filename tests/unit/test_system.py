@@ -2,7 +2,16 @@
 
 import pytest
 
-from hostel_huptainer.system import error_message
+from hostel_huptainer.system import abnormal_exit, error_message
+
+
+class TestAbnormalExit(object):
+    def test_calls_sys_exit_with_code_one(self, mocker):
+        mock_exit = mocker.patch('hostel_huptainer.system.sys.exit')
+
+        abnormal_exit()
+
+        mock_exit.assert_called_once_with(1)
 
 
 class TestErrorMessage(object):
