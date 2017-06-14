@@ -42,7 +42,7 @@ class TestEnvironmentInteractions(object):
         mock_exit.assert_called_once_with(1)
 
     @pytest.mark.parametrize('message', ['Danger!', ''])
-    def test_calls_stderr_with_input_error_message_when_raised(
+    def test_calls_error_message_with_input_error_message_when_raised(
             self, mocker, message):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys')
@@ -50,11 +50,12 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError(message))
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
-        mock_stderr = mocker.patch('hostel_huptainer.__main__.stderr')
+        mock_error_message = mocker.patch(
+            'hostel_huptainer.__main__.error_message')
 
         main()
 
-        mock_stderr.assert_called_once_with(message)
+        mock_error_message.assert_called_once_with(message)
 
 
 class TestArgumentsInteractions(object):
@@ -104,18 +105,20 @@ class TestMatchingContainersInteractions(object):
         mock_exit.assert_called_once_with(1)
 
     @pytest.mark.parametrize('message', ['Danger!', ''])
-    def test_calls_stderr_with_raised_error_text(self, mocker, message):
+    def test_calls_error_message_with_raised_error_text(
+            self, mocker, message):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
                      side_effect=NoMatchesError(message))
-        mock_stderr = mocker.patch('hostel_huptainer.__main__.stderr')
+        mock_error_message = mocker.patch(
+            'hostel_huptainer.__main__.error_message')
 
         main()
 
-        mock_stderr.assert_called_once_with(message)
+        mock_error_message.assert_called_once_with(message)
 
     @pytest.mark.parametrize('stub_matches', [
         [mock.MagicMock()],
