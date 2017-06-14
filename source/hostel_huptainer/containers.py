@@ -8,5 +8,5 @@ class MatchingContainers(object):
         raise NotImplementedError(label_value)
 
     def __iter__(self):
-        """Iterates over each of the matching containers."""
+        """Iterate over each of the matching containers."""
         raise NotImplementedError()
