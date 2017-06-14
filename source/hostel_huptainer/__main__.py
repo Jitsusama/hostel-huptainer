@@ -7,7 +7,7 @@ from hostel_huptainer.arguments import Arguments
 from hostel_huptainer.containers import MatchingContainers
 from hostel_huptainer.environment import Environment
 from hostel_huptainer.errors import InputError, NoMatchesError
-from hostel_huptainer.output import stderr
+from hostel_huptainer.system import stderr
 
 
 def main():

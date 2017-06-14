@@ -2,13 +2,13 @@
 
 import pytest
 
-from hostel_huptainer.output import stderr
+from hostel_huptainer.system import stderr
 
 
 @pytest.mark.parametrize('message', ['Help!', 1])
 def test_stderr_calls_print_properly_with_truthy_message(mocker, message):
-    stub_stderr = mocker.patch('hostel_huptainer.output.sys.stderr')
-    mock_print = mocker.patch('hostel_huptainer.output.print')
+    stub_stderr = mocker.patch('hostel_huptainer.system.sys.stderr')
+    mock_print = mocker.patch('hostel_huptainer.system.print')
 
     stderr(message)
 
@@ -17,7 +17,7 @@ def test_stderr_calls_print_properly_with_truthy_message(mocker, message):
 
 @pytest.mark.parametrize('message', ['', None])
 def test_stderr_does_not_call_print_with_falsey_message(mocker, message):
-    mock_print = mocker.patch('hostel_huptainer.output.print')
+    mock_print = mocker.patch('hostel_huptainer.system.print')
 
     stderr(message)
 
