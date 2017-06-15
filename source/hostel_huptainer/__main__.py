@@ -26,7 +26,7 @@ def main():
 
 
 def _handle_error(error):
-    error_message(str(error))
+    error_message(error)
     abnormal_exit()
 
 

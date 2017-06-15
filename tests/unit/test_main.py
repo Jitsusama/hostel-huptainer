@@ -45,19 +45,20 @@ class TestEnvironmentInteractions(object):
     @pytest.mark.parametrize('message', ['Danger!', ''])
     def test_calls_error_message_with_input_error_message_when_raised(
             self, mocker, message):
+        stub_error = InputError(message)
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys.argv')
         mocker.patch('hostel_huptainer.__main__.abnormal_exit')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
-                     side_effect=InputError(message))
+                     side_effect=stub_error)
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
         mock_error_message = mocker.patch(
             'hostel_huptainer.__main__.error_message')
 
         main()
 
-        mock_error_message.assert_called_once_with(message)
+        mock_error_message.assert_called_once_with(stub_error)
 
 
 class TestArgumentsInteractions(object):
@@ -110,19 +111,20 @@ class TestMatchingContainersInteractions(object):
     @pytest.mark.parametrize('message', ['Danger!', ''])
     def test_calls_error_message_with_raised_error_text(
             self, mocker, message):
+        stub_error = NoMatchesError(message)
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys.argv')
         mocker.patch('hostel_huptainer.__main__.abnormal_exit')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
-                     side_effect=NoMatchesError(message))
+                     side_effect=stub_error)
         mock_error_message = mocker.patch(
             'hostel_huptainer.__main__.error_message')
 
         main()
 
-        mock_error_message.assert_called_once_with(message)
+        mock_error_message.assert_called_once_with(stub_error)
 
     @pytest.mark.parametrize('stub_matches', [
         [mock.MagicMock()],
