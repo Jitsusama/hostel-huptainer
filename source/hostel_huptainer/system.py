@@ -12,4 +12,4 @@ def abnormal_exit():
 def error_message(message):
     """Write message to STDERR, when message is valid."""
     if message:
-        print(message, file=sys.stderr)
+        print('{}'.format(message), file=sys.stderr)
