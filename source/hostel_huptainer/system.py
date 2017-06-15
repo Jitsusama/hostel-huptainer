@@ -5,7 +5,7 @@ import sys
 
 
 def abnormal_exit():
-    """Exits program under abnormal conditions."""
+    """Exit program under abnormal conditions."""
     sys.exit(1)
 
 
