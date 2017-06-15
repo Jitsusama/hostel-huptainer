@@ -12,4 +12,7 @@ class MatchingContainers(object):
 
     def __iter__(self):
         """Iterate over each of the matching containers."""
-        raise NotImplementedError()
+        filters = {'status': 'running',
+                   'label':  'org.eff.certbot.cert_cns'}
+        self.docker.containers.list(filters=filters)
+        yield None

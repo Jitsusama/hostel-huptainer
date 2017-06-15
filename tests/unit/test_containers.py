@@ -35,9 +35,16 @@ def test_properly_initializes_docker_client(mocker):
     assert matching_containers.docker == stub_client
 
 
-@pytest.mark.skip('to be tackled later')
-def test___iter___properly_passes_filter_to_container_list_method():
-    pytest.fail('test not written yet')
+def test___iter___properly_passes_filter_to_container_list_method(mocker):
+    mock_docker = mocker.patch('hostel_huptainer.containers.docker.client')
+
+    matching_containers = MatchingContainers(None)
+    iterator = iter(matching_containers)
+    next(iterator)
+
+    expected_dict = {'label': 'org.eff.certbot.cert_cns', 'status': 'running'}
+    mock_docker.assert_has_calls([
+        mocker.call.DockerClient().containers.list(filters=expected_dict)])
 
 
 @pytest.mark.skip('to be tackled later')
