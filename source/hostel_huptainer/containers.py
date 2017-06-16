@@ -3,6 +3,14 @@
 import docker
 
 
+def csv_contains_value(csv_list, value):
+    """Test whether passed csv list contains passed value."""
+    item_list = csv_list.split(',')
+
+    return any([
+        item.strip() == value for item in item_list])
+
+
 class MatchingContainers(object):
     """Iterable for live Docker containers matching filter label value."""
 
@@ -14,5 +22,6 @@ class MatchingContainers(object):
         """Iterate over each of the matching containers."""
         filters = {'status': 'running',
                    'label':  'org.eff.certbot.cert_cns'}
-        self.docker.containers.list(filters=filters)
+        containers = self.docker.containers.list(filters=filters)
+        csv_contains_value(containers, self.label_value)
         yield None

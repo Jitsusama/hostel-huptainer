@@ -6,23 +6,46 @@
 # client = docker.client.DockerClient()
 # client.containers.list(filters={'label': 'org.eff.certbot.cert_cns', 'status': 'running'})
 # for container in containers:
-#     cn_list = container.labels['org.eff.certbot.cert_cns']
-#     for host in cn_list.split(','):
-#         if hostname == host.strip():
-#             yield container
+#     cn_list = container.labels.get('org.eff.certbot.cert_cns')
+#     if not cn_list:
+#         raise NoMatchesFound()
+#     if any([host.strip() == 'test-host' for host in cn_list.split(',')]):
+#         yield container
+#     else:
+#         raise NoMatchesFound()
 
 import pytest
 
-from hostel_huptainer.containers import MatchingContainers
+from hostel_huptainer.containers import MatchingContainers, csv_contains_value
+
+
+@pytest.mark.parametrize('csv_string', [
+    'match',
+    'no_match,match,notta',
+    'no match, match, notta, same here'])
+def test_csv_contains_value_returns_true_on_match(csv_string):
+    result = csv_contains_value(csv_string, 'match')
+
+    assert result
+
+
+@pytest.mark.parametrize('csv_string', [
+    'nomatch',
+    'no_match,stillnomatch,notta',
+    'no match, menomatchmatch, notta, same here'])
+def test_csv_contains_value_returns_false_when_no_match_found(csv_string):
+    result = csv_contains_value(csv_string, 'match')
+
+    assert not result
 
 
 @pytest.mark.parametrize('label', ['thing1.com', 'arm1.thing2.com'])
 def test_properly_initializes_label_value(mocker, label):
     mocker.patch('hostel_huptainer.containers.docker')
 
-    matching_containers = MatchingContainers(label)
+    containers = MatchingContainers(label)
 
-    assert matching_containers.label_value == label
+    assert containers.label_value == label
 
 
 def test_properly_initializes_docker_client(mocker):
@@ -30,21 +53,39 @@ def test_properly_initializes_docker_client(mocker):
     mocker.patch('hostel_huptainer.containers.docker.client.DockerClient',
                  return_value=stub_client)
 
-    matching_containers = MatchingContainers(None)
+    containers = MatchingContainers(None)
 
-    assert matching_containers.docker == stub_client
+    assert containers.docker == stub_client
 
 
 def test___iter___properly_passes_filter_to_container_list_method(mocker):
     mock_docker = mocker.patch('hostel_huptainer.containers.docker.client')
 
-    matching_containers = MatchingContainers(None)
-    iterator = iter(matching_containers)
+    containers = MatchingContainers(None)
+    iterator = iter(containers)
     next(iterator)
 
     expected_dict = {'label': 'org.eff.certbot.cert_cns', 'status': 'running'}
     mock_docker.assert_has_calls([
         mocker.call.DockerClient().containers.list(filters=expected_dict)])
+
+
+def test___iter___passes_label_string_to_csv_contains_value(mocker):
+    stub_mocks = [mocker.MagicMock(), mocker.MagicMock()]
+    stub_list = mocker.MagicMock(return_value=stub_mocks)
+    stub_client = mocker.MagicMock()
+    stub_client.return_value.containers = mocker.MagicMock(list=stub_list)
+    mocker.patch(
+        'hostel_huptainer.containers.docker.client',
+        DockerClient=stub_client)
+    mock_contains = mocker.patch(
+        'hostel_huptainer.containers.csv_contains_value')
+
+    containers = MatchingContainers('stub-host.fqdn')
+    iterator = iter(containers)
+    next(iterator)
+
+    mock_contains.assert_called_once_with(stub_mocks, 'stub-host.fqdn')
 
 
 @pytest.mark.skip('to be tackled later')
