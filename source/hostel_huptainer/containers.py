@@ -23,5 +23,8 @@ class MatchingContainers(object):
         filters = {'status': 'running',
                    'label':  'org.eff.certbot.cert_cns'}
         containers = self.docker.containers.list(filters=filters)
-        csv_contains_value(containers, self.label_value)
-        yield None
+
+        for container in containers:
+            label_value = container.labels.get('org.eff.certbot.cert_cns')
+            csv_contains_value(label_value, self.label_value)
+            yield None
