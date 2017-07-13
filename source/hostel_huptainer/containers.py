@@ -26,5 +26,5 @@ class MatchingContainers(object):
 
         for container in containers:
             label_value = container.labels.get('org.eff.certbot.cert_cns')
-            csv_contains_value(label_value, self.label_value)
-            yield None
+            if csv_contains_value(label_value, self.label_value):
+                yield container

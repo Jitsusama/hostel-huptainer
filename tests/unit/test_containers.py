@@ -106,17 +106,37 @@ class TestMatchingContainersIter(object):
         for _ in stub_container_list:
             mock_contains.assert_called_with(label_list, 'stub-host.fqdn')
 
-    @pytest.mark.skip('to be tackled later')
-    def test___iter___only_yields_matching_containers(self):
-        pytest.fail('test not written yet')
+    def test___iter___yields_matching_containers(
+            self, mocker):
+        stub_item = mocker.MagicMock()
+        stub_item.labels.get = lambda _: 'stub-host.fqdn'
+        stub_container_list = [stub_item]
+        stub_client = mocker.MagicMock()
+        stub_client.return_value.containers.list.return_value = (
+            stub_container_list)
+        mocker.patch(
+            'hostel_huptainer.containers.docker.client',
+            DockerClient=stub_client)
 
-    @pytest.mark.skip('to be tackled later')
-    def test_raises_no_matches_error_when_no_containers_match(self):
-        pytest.fail('test not written yet.')
+        matching_containers = MatchingContainers('stub-host.fqdn')
 
-    @pytest.mark.skip('to be tackled later')
-    def test_no_matches_error_states_when_no_matches_found(self):
-        pytest.fail('test not written yet')
+        assert stub_item in list(matching_containers)
+
+    def test___iter___does_not_yield_mismatching_containers(
+            self, mocker):
+        stub_item = mocker.MagicMock()
+        stub_item.labels.get = lambda _: 'no-match.fqdn'
+        stub_container_list = [stub_item]
+        stub_client = mocker.MagicMock()
+        stub_client.return_value.containers.list.return_value = (
+            stub_container_list)
+        mocker.patch(
+            'hostel_huptainer.containers.docker.client',
+            DockerClient=stub_client)
+
+        matching_containers = MatchingContainers('stub-host.fqdn')
+
+        assert stub_item not in list(matching_containers)
 
     @pytest.mark.skip('to be tackled later')
     def test_raises_no_matches_error_when_docker_api_error_encountered(self):
