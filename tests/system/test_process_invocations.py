@@ -3,6 +3,7 @@
 import os
 import subprocess
 import pytest
+import requests
 from hostel_huptainer import __version__
 
 # ATTENTION: See conftest.py for py.test fixtures.
@@ -49,7 +50,6 @@ def test_restarts_container_with_matching_label(
     assert 'HUPPED' in python_container.logs().decode()
 
 
-@pytest.mark.skip('to be tackled later')
 def test_does_not_restart_containers_with_mismatched_label(
         python_container):
     python_container.start()
@@ -59,6 +59,7 @@ def test_does_not_restart_containers_with_mismatched_label(
         env=os.environ.update({
             'CERTBOT_HOSTNAME': 'idontmatch.testdomain.tld'}))
 
-    python_container.wait(timeout=2)
+    with pytest.raises(requests.ReadTimeout):
+        python_container.wait(timeout=2)
 
-    assert 'HUPPED' not in python_container.logs()
+    assert 'HUPPED' not in python_container.logs().decode()
