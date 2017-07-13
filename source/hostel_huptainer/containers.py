@@ -12,7 +12,7 @@ def csv_contains_value(csv_list, value):
 
 
 def sighup(container):
-    """Sends a SIGHUP kill signal to the passed container."""
+    """Send a SIGHUP kill signal to the passed container."""
     container.kill(signal='SIGHUP')
 
 

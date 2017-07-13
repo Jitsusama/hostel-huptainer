@@ -69,7 +69,7 @@ class TestMatchingContainersIter(object):
             'hostel_huptainer.containers.docker.client',
             DockerClient=stub_client)
 
-        _ = [item for item in MatchingContainers(None)]
+        list(MatchingContainers(None))
 
         expected_dict = {
             'label': 'org.eff.certbot.cert_cns',
@@ -88,7 +88,7 @@ class TestMatchingContainersIter(object):
                      DockerClient=stub_client)
         mocker.patch('hostel_huptainer.containers.csv_contains_value')
 
-        _ = [item for item in MatchingContainers('stub-host.fqdn')]
+        list(MatchingContainers('stub-host.fqdn'))
 
         for mock_item in mock_list:
             mock_item.assert_has_calls([
