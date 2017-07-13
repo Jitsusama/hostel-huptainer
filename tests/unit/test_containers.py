@@ -1,19 +1,5 @@
 """Tests the hostel_huptainer.containers module."""
 
-# Hack implementation:
-#
-# import docker
-# client = docker.client.DockerClient()
-# client.containers.list(filters={'label': 'org.eff.certbot.cert_cns', 'status': 'running'})
-# for container in containers:
-#     cn_list = container.labels.get('org.eff.certbot.cert_cns')
-#     if not cn_list:
-#         raise NoMatchesFound()
-#     if any([host.strip() == 'test-host' for host in cn_list.split(',')]):
-#         yield container
-#     else:
-#         raise NoMatchesFound()
-
 try:
     import unittest.mock as mock
 except ImportError:
