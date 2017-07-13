@@ -46,7 +46,7 @@ def test_restarts_container_with_matching_label(
             'CERTBOT_HOSTNAME': 'testhost.testdomain.tld'}))
 
     python_container.wait(timeout=2)
-    assert 'HUPPED' in python_container.logs()
+    assert 'HUPPED' in python_container.logs().decode()
 
 
 @pytest.mark.skip('to be tackled later')
