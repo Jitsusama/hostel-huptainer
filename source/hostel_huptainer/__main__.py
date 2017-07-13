@@ -4,7 +4,7 @@ import os
 import sys
 
 from hostel_huptainer.arguments import Arguments
-from hostel_huptainer.containers import MatchingContainers
+from hostel_huptainer.containers import MatchingContainers, sighup
 from hostel_huptainer.environment import Environment
 from hostel_huptainer.errors import InputError, NoMatchesError
 from hostel_huptainer.system import abnormal_exit, error_message
@@ -22,7 +22,7 @@ def main():
         _handle_error(error)
     else:
         for container in containers:
-            container.sighup()
+            sighup(container)
 
 
 def _handle_error(error):

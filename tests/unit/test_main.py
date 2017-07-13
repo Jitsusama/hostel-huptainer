@@ -19,6 +19,7 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.InputError')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
+        mocker.patch('hostel_huptainer.__main__.sighup')
         stub_environ = mocker.patch(
             'hostel_huptainer.__main__.os.environ',
             value=environ)
@@ -35,6 +36,7 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError)
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
+        mocker.patch('hostel_huptainer.__main__.sighup')
         mock_abnormal_exit = mocker.patch(
             'hostel_huptainer.__main__.abnormal_exit')
 
@@ -53,6 +55,7 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=stub_error)
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
+        mocker.patch('hostel_huptainer.__main__.sighup')
         mock_error_message = mocker.patch(
             'hostel_huptainer.__main__.error_message')
 
@@ -69,6 +72,7 @@ class TestArgumentsInteractions(object):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
+        mocker.patch('hostel_huptainer.__main__.sighup')
         stub_argv = mocker.patch(
             'hostel_huptainer.__main__.sys.argv',
             value=argv)
@@ -88,6 +92,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      spec=Environment, hostname=hostname)
+        mocker.patch('hostel_huptainer.__main__.sighup')
         mock_matches = mocker.patch(
             'hostel_huptainer.__main__.MatchingContainers')
 
@@ -101,6 +106,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
                      side_effect=NoMatchesError)
+        mocker.patch('hostel_huptainer.__main__.sighup')
         mock_abnormal_exit = mocker.patch(
             'hostel_huptainer.__main__.abnormal_exit')
 
@@ -119,6 +125,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
                      side_effect=stub_error)
+        mocker.patch('hostel_huptainer.__main__.sighup')
         mock_error_message = mocker.patch(
             'hostel_huptainer.__main__.error_message')
 
@@ -135,6 +142,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.sys')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
+        mock_sighup = mocker.patch('hostel_huptainer.__main__.sighup')
 
         stub_matching = mocker.patch(
             'hostel_huptainer.__main__.MatchingContainers')
@@ -143,5 +151,5 @@ class TestMatchingContainersInteractions(object):
 
         main()
 
-        for mock_match in stub_matches:
-            mock_match.assert_has_calls([mocker.call.sighup()])
+        for stub_match in stub_matches:
+            mock_sighup.assert_has_calls([mocker.call(stub_match)])
