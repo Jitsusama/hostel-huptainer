@@ -7,7 +7,7 @@ except ImportError:
 import pytest
 
 from hostel_huptainer.containers import (
-    MatchingContainers, csv_contains_value)
+    MatchingContainers, csv_contains_value, sighup)
 
 
 class TestCsvContains(object):
@@ -28,6 +28,15 @@ class TestCsvContains(object):
         result = csv_contains_value(csv_string, 'match')
 
         assert not result
+
+
+class TestSighup(object):
+    def test_properly_calls_kill(self, mocker):
+        mock_container = mocker.MagicMock()
+
+        sighup(mock_container)
+
+        mock_container.assert_has_calls([mocker.call.kill(signal="SIGHUP")])
 
 
 class TestMatchingContainersInit(object):

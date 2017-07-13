@@ -11,6 +11,11 @@ def csv_contains_value(csv_list, value):
         item.strip() == value for item in item_list])
 
 
+def sighup(container):
+    """Sends a SIGHUP kill signal to the passed container."""
+    container.kill(signal='SIGHUP')
+
+
 class MatchingContainers(object):
     """Iterable for live Docker containers matching filter label value."""
 
