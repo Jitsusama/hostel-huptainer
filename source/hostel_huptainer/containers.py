@@ -38,5 +38,5 @@ class MatchingContainers(object):
                 if csv_contains_value(label_value, self.label_value):
                     yield container
 
-        except docker.errors.APIError:
-            raise ContainerError
+        except docker.errors.APIError as error:
+            raise ContainerError(str(error))

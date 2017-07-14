@@ -142,7 +142,7 @@ class TestMatchingContainersIter(object):
     def test_raises_error_when_docker_api_error_encountered(
             self, mocker):
         stub_client = mocker.MagicMock(
-            side_effect=docker.errors.APIError("stub-message"))
+            side_effect=docker.errors.APIError(None))
         mocker.patch(
             'hostel_huptainer.containers.docker.client',
             DockerClient=stub_client)
@@ -150,7 +150,15 @@ class TestMatchingContainersIter(object):
         with pytest.raises(ContainerError):
             list(MatchingContainers(None))
 
-    @pytest.mark.skip('to be tackled later')
-    def test_error_contains_message_when_docker_api_issue_encountered(
-            self):
-        pytest.fail('test not written yet')
+    def test_error_encapsulates_docker_api_error_message(
+            self, mocker):
+        stub_client = mocker.MagicMock(
+            side_effect=docker.errors.APIError("stub-message"))
+        mocker.patch(
+            'hostel_huptainer.containers.docker.client',
+            DockerClient=stub_client)
+
+        with pytest.raises(ContainerError) as error:
+            list(MatchingContainers(None))
+
+        assert "stub-message" in str(error)
