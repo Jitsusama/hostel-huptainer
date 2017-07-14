@@ -6,7 +6,7 @@ import sys
 from hostel_huptainer.arguments import Arguments
 from hostel_huptainer.containers import MatchingContainers, sighup
 from hostel_huptainer.environment import Environment
-from hostel_huptainer.errors import InputError, NoMatchesError
+from hostel_huptainer.errors import InputError, ContainerError
 from hostel_huptainer.system import abnormal_exit, error_message
 
 
@@ -18,7 +18,7 @@ def main():
         containers = MatchingContainers(environment.hostname)
     except InputError as error:
         _handle_error(error)
-    except NoMatchesError as error:
+    except ContainerError as error:
         _handle_error(error)
     else:
         for container in containers:

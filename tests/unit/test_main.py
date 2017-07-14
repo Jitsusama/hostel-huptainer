@@ -6,7 +6,7 @@ try:
 except ImportError:
     import mock
 from hostel_huptainer.environment import Environment
-from hostel_huptainer.errors import InputError, NoMatchesError
+from hostel_huptainer.errors import InputError, ContainerError
 
 from hostel_huptainer.__main__ import main
 
@@ -105,7 +105,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
-                     side_effect=NoMatchesError)
+                     side_effect=ContainerError)
         mocker.patch('hostel_huptainer.__main__.sighup')
         mock_abnormal_exit = mocker.patch(
             'hostel_huptainer.__main__.abnormal_exit')
@@ -117,7 +117,7 @@ class TestMatchingContainersInteractions(object):
     @pytest.mark.parametrize('message', ['Danger!', ''])
     def test_calls_error_message_with_raised_error_text(
             self, mocker, message):
-        stub_error = NoMatchesError(message)
+        stub_error = ContainerError(message)
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys.argv')
         mocker.patch('hostel_huptainer.__main__.abnormal_exit')
