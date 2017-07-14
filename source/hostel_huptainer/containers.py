@@ -2,7 +2,7 @@
 
 import docker
 import docker.errors
-from errors import ContainerError
+from hostel_huptainer.errors import ContainerError
 
 
 def csv_contains_value(csv_list, value):

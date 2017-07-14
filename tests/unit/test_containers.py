@@ -5,8 +5,8 @@ try:
 except ImportError:
     import mock
 import docker.errors
-from hostel_huptainer.errors import ContainerError
 import pytest
+from hostel_huptainer.errors import ContainerError
 
 from hostel_huptainer.containers import (
     MatchingContainers, csv_contains_value, sighup)
