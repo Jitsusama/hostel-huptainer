@@ -4,6 +4,8 @@ try:
     import unittest.mock as mock
 except ImportError:
     import mock
+import docker.errors
+from hostel_huptainer.errors import ContainerError
 import pytest
 
 from hostel_huptainer.containers import (
@@ -47,16 +49,6 @@ class TestMatchingContainersInit(object):
         containers = MatchingContainers(label)
 
         assert containers.label_value == label
-
-    def test_properly_sets_docker_client(self, mocker):
-        stub_client = mocker.MagicMock()
-        mocker.patch(
-            'hostel_huptainer.containers.docker.client.DockerClient',
-            return_value=stub_client)
-
-        containers = MatchingContainers(None)
-
-        assert containers.docker == stub_client
 
 
 class TestMatchingContainersIter(object):
@@ -147,10 +139,18 @@ class TestMatchingContainersIter(object):
 
         assert stub_item not in list(matching_containers)
 
-    @pytest.mark.skip('to be tackled later')
-    def test_raises_no_matches_error_when_docker_api_error_encountered(self):
-        pytest.fail('test not written yet.')
+    def test_raises_error_when_docker_api_error_encountered(
+            self, mocker):
+        stub_client = mocker.MagicMock(
+            side_effect=docker.errors.APIError("stub-message"))
+        mocker.patch(
+            'hostel_huptainer.containers.docker.client',
+            DockerClient=stub_client)
+
+        with pytest.raises(ContainerError):
+            list(MatchingContainers(None))
 
     @pytest.mark.skip('to be tackled later')
-    def test_no_matches_error_states_when_docker_api_issue_encountered(self):
+    def test_error_contains_message_when_docker_api_issue_encountered(
+            self):
         pytest.fail('test not written yet')

@@ -1,6 +1,8 @@
 """Work with Docker containers."""
 
 import docker
+import docker.errors
+from errors import ContainerError
 
 
 def csv_contains_value(csv_list, value):
@@ -21,15 +23,20 @@ class MatchingContainers(object):
 
     def __init__(self, label_value):
         self.label_value = label_value
-        self.docker = docker.client.DockerClient()
 
     def __iter__(self):
         """Iterate over each of the matching containers."""
         filters = {'status': 'running',
                    'label':  'org.eff.certbot.cert_cns'}
-        containers = self.docker.containers.list(filters=filters)
 
-        for container in containers:
-            label_value = container.labels.get('org.eff.certbot.cert_cns')
-            if csv_contains_value(label_value, self.label_value):
-                yield container
+        try:
+            client = docker.client.DockerClient()
+            containers = client.containers.list(filters=filters)
+
+            for container in containers:
+                label_value = container.labels.get('org.eff.certbot.cert_cns')
+                if csv_contains_value(label_value, self.label_value):
+                    yield container
+
+        except docker.errors.APIError:
+            raise ContainerError
