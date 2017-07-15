@@ -1,4 +1,0 @@
-TODO
-====
-
-*  Publish to DockerHub.
