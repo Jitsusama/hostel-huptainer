@@ -59,7 +59,9 @@ def test_does_not_restart_containers_with_mismatched_label(
         env=os.environ.update({
             'CERTBOT_HOSTNAME': 'idontmatch.testdomain.tld'}))
 
-    with pytest.raises(requests.ReadTimeout):
+    try:
         python_container.wait(timeout=2)
+    except requests.ReadTimeout:
+        pass
 
     assert 'HUPPED' not in python_container.logs().decode()
