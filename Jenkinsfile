@@ -25,7 +25,7 @@ node {
         }
     }
 
-    stage("Run Python Test Suite") {
+    stage("Run Test Suite") {
         parallel py27: {
             echo "Create Python 2.7 Environment"
             python_27 = docker.build("python:2.7-hostel-env", "-f tests/envs/python2.7/Dockerfile .")
@@ -75,6 +75,29 @@ node {
                 }
                 catch (e) {}
             }
+        }, certbot: {
+            echo "Create hostel-huptainer Environment"
+            spinnerImage = docker.image("python:2.7")
+            spinnerContainer = spinner.run(
+                    "--label 'org.eff.certbot.cert_cns=test.grrbrr.ca'",
+                    'python2 -c "import signal;def h(*args): raise Exception();signal.signal(signal.SIGHUP, h);while True: pass"')
+            certbot = docker.build("hostel-huptainer", ".")
+
+            certbot.inside {
+                withCredentials([string(credentialsId: 'DO_APIKEY', variable: 'DO_APIKEY'),
+                                 string(credentialsId: 'DO_DOMAIN', variable: 'DO_DOMAIN'),
+                                 string(credentialsId: 'CERTBOT_EMAIL', variable: 'CERTBOT_EMAIL')]) {
+                    withEnv(["DO_APIKEY = $DO_APIKEY", "DO_DOMAIN = $DO_DOMAIN"], "LETS_DO_POSTCMD = hostel-huptainer") {
+                        sh """\
+certbot certonly --manual\
+    --manual-auth-hook lets-do-dns --manual-cleanup-hook lets-do-dns\
+    --preferred-challenges dns -d test.$DO_DOMAIN --test-cert --manual-public-ip-logging-ok\
+    --non-interactive --agree-tos --email $CERTBOT_EMAIL"""
+                    }
+                }
+            }
+            sleep(1000 as long)
+            spinnerContainer.stop()
         }
         echo "Check Code Coverage"
         python_build.inside {
