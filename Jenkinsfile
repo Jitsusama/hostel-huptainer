@@ -78,7 +78,7 @@ node {
         }, certbot: {
             echo "Create hostel-huptainer Environment"
             spinnerImage = docker.image("python:2.7")
-            spinnerContainer = spinner.run(
+            spinnerContainer = spinnerImage.run(
                     "--label 'org.eff.certbot.cert_cns=test.grrbrr.ca'",
                     'python2 -c "import signal;def h(*args): raise Exception();signal.signal(signal.SIGHUP, h);while True: pass"')
             certbot = docker.build("hostel-huptainer", ".")
