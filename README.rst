@@ -77,6 +77,7 @@ you pulled the image from the Docker Hub:
 .. code-block:: bash
 
    docker run -v "$(pwd)/my-cert-dir:/etc/letsencrypt" \
+       -v "/var/run/docker.sock:/var/run/docker.sock" \
        -e "DO_APIKEY=super-secret-key" \
        -e "DO_DOMAIN=mydomain.com" \
        -e "LETS_DO_POSTCMD=hostel-huptainer" \
