@@ -59,6 +59,16 @@ Here's an example of using this program directly:
    CERTBOT_HOSTNAME=myhost.mydomain.com \
    hostel-huptainer
 
+By default hostel-huptainer will reload matching containers by sending
+them a SIGHUP signal. You can override this default by passing the
+``--signal`` or ``-s`` option and specifying either ``reload`` (SIGHUP)
+or ``restart`` (SIGINT followed by process relaunch) like so:
+
+.. code-block:: bash
+
+    CERTBOT_HOSTNAME=myhost.mydomain.com \
+    hostel-huptainer --signal restart
+
 Here's an example of how you can use this program via
 certbot/lets-do-dns:
 
