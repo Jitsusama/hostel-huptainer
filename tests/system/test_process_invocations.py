@@ -70,20 +70,20 @@ def test_does_not_reload_containers_with_mismatched_label(
 def test_reloads_container_with_matching_label_when_asked(
         python_container):
     subprocess.check_call(
-        args=['hostel-huptainer', '--signal', 'restart'],
-        env=os.environ.update({
-            'CERTBOT_HOSTNAME': 'testhost.testdomain.tld'}))
-
-    python_container.wait(timeout=2)
-    assert 'TERMED' in python_container.logs().decode()
-
-
-def test_restarts_container_with_matching_label_when_asked(
-        python_container):
-    subprocess.check_call(
         args=['hostel-huptainer', '--signal', 'reload'],
         env=os.environ.update({
             'CERTBOT_HOSTNAME': 'testhost.testdomain.tld'}))
 
     python_container.wait(timeout=2)
     assert 'HUPPED' in python_container.logs().decode()
+
+
+def test_restarts_container_with_matching_label_when_asked(
+        python_container):
+    subprocess.check_call(
+        args=['hostel-huptainer', '--signal', 'restart'],
+        env=os.environ.update({
+            'CERTBOT_HOSTNAME': 'testhost.testdomain.tld'}))
+
+    python_container.wait(timeout=2)
+    assert 'TERMED' in python_container.logs().decode()
