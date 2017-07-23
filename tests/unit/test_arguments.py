@@ -34,7 +34,8 @@ def test_passes_version_details_to_add_argument_before_parsing(
         mocker, version):
     stub_version = mocker.patch(
         'hostel_huptainer.arguments.__version__', value=version)
-    mock_parser = mocker.patch('hostel_huptainer.arguments.ArgumentParser')
+    mock_parser = mocker.patch(
+        'hostel_huptainer.arguments.ArgumentParser')
 
     Arguments(['hostel-huptainer'])
 
@@ -42,3 +43,16 @@ def test_passes_version_details_to_add_argument_before_parsing(
         mocker.call().add_argument(
             '-v', '--version', action='version', version=stub_version),
         mocker.call().parse_args(mocker.ANY)])
+
+
+def test_properly_adds_signal_argument_to_argument_parser(
+        mocker):
+    mock_parser = mocker.patch(
+        'hostel_huptainer.arguments.ArgumentParser')
+
+    Arguments(['hostel-huptainer'])
+
+    mock_parser.assert_has_calls([
+        mocker.call().add_argument(
+            '-s', '--signal', dest='signal_method', default='reload',
+            choices=['reload', 'restart'], help=mocker.ANY)])
