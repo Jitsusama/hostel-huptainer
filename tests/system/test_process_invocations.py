@@ -60,11 +60,9 @@ def test_does_not_reload_containers_with_mismatched_label(
             'CERTBOT_HOSTNAME': 'idontmatch.testdomain.tld'}))
 
     try:
-        python_container.wait(timeout=4)
+        python_container.wait(timeout=6)
     except requests.ReadTimeout:
-        pass
-
-    assert 'HUPPED' not in python_container.logs().decode()
+        assert 'HUPPED' not in python_container.logs().decode()
 
 
 def test_reloads_container_with_matching_label_when_asked(
@@ -90,8 +88,6 @@ def test_restarts_container_with_matching_label_when_asked(
             'CERTBOT_HOSTNAME': 'testhost.testdomain.tld'}))
 
     try:
-        python_container.wait(timeout=4)
+        python_container.wait(timeout=6)
     except requests.ReadTimeout:
-        pass
-
-    assert 'TERMED' in python_container.logs().decode()
+        assert 'TERMED' in python_container.logs().decode()
