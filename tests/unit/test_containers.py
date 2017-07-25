@@ -40,6 +40,13 @@ class TestSendSignal(object):
 
         mock_container.assert_has_calls([mocker.call.kill(signal="SIGHUP")])
 
+    def test_properly_restarts_when_requested(self, mocker):
+        mock_container = mocker.MagicMock()
+
+        send_signal('restart', mock_container)
+
+        mock_container.assert_has_calls([mocker.call.restart()])
+
 
 class TestMatchingContainersInit(object):
     @pytest.mark.parametrize('label', ['thing1.com', 'arm1.thing2.com'])

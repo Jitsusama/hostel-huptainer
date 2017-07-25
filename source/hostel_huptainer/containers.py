@@ -14,8 +14,12 @@ def csv_contains_value(csv_list, value):
 
 
 def send_signal(signal_method, container):
-    """Use the specified method to reload or restart the container."""
-    container.kill(signal='SIGHUP')
+    """Reload or restart the container."""
+    if signal_method == 'reload':
+        container.kill(signal='SIGHUP')
+
+    elif signal_method == 'restart':
+        container.restart()
 
 
 class MatchingContainers(object):
