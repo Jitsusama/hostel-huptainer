@@ -9,7 +9,7 @@ import pytest
 from hostel_huptainer.errors import ContainerError
 
 from hostel_huptainer.containers import (
-    MatchingContainers, csv_contains_value, sighup)
+    MatchingContainers, csv_contains_value, send_signal)
 
 
 class TestCsvContains(object):
@@ -32,11 +32,11 @@ class TestCsvContains(object):
         assert not result
 
 
-class TestSighup(object):
-    def test_properly_calls_kill(self, mocker):
+class TestSendSignal(object):
+    def test_properly_sends_sighup_when_requested(self, mocker):
         mock_container = mocker.MagicMock()
 
-        sighup(mock_container)
+        send_signal('reload', mock_container)
 
         mock_container.assert_has_calls([mocker.call.kill(signal="SIGHUP")])
 

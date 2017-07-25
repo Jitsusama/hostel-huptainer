@@ -9,9 +9,15 @@ class Arguments(object):
 
     def __init__(self, argument_vector):
         self._parser = None
+        self._parsed_values = None
+
         self._initialize_parser()
         self._attach_arguments_to_parser()
         self._parse_passed_arguments(argument_vector)
+
+    def __getattr__(self, item):
+        """Grab unknown properties from parsed argument namespace."""
+        return self._parsed_values.__getattribute__(item)
 
     def _initialize_parser(self):
         description = '''\
@@ -23,7 +29,8 @@ This program requires the CERTBOT_HOSTNAME variable to be present as an
 environment variable in order to run. When this is called in connection
 with the certbot program, this variable should automatically be set.'''
 
-        self._parser = ArgumentParser(description=description, epilog=epilog)
+        self._parser = ArgumentParser(
+            description=description, epilog=epilog)
 
     def _attach_arguments_to_parser(self):
         self._parser.add_argument(
@@ -38,4 +45,5 @@ with the certbot program, this variable should automatically be set.'''
             '-v', '--version', action='version', version=__version__)
 
     def _parse_passed_arguments(self, argument_vector):
-        self._parser.parse_args(argument_vector[1:])
+        self._parsed_values = self._parser.parse_args(
+            argument_vector[1:])
