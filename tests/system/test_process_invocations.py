@@ -60,7 +60,7 @@ def test_does_not_reload_containers_with_mismatched_label(
             'CERTBOT_HOSTNAME': 'idontmatch.testdomain.tld'}))
 
     try:
-        python_container.wait(timeout=2)
+        python_container.wait(timeout=4)
     except requests.ReadTimeout:
         pass
 
@@ -69,6 +69,8 @@ def test_does_not_reload_containers_with_mismatched_label(
 
 def test_reloads_container_with_matching_label_when_asked(
         python_container):
+    python_container.start()
+
     subprocess.check_call(
         args=['hostel-huptainer', '--signal', 'reload'],
         env=os.environ.update({
@@ -80,10 +82,16 @@ def test_reloads_container_with_matching_label_when_asked(
 
 def test_restarts_container_with_matching_label_when_asked(
         python_container):
+    python_container.start()
+
     subprocess.check_call(
         args=['hostel-huptainer', '--signal', 'restart'],
         env=os.environ.update({
             'CERTBOT_HOSTNAME': 'testhost.testdomain.tld'}))
 
-    python_container.wait(timeout=2)
+    try:
+        python_container.wait(timeout=4)
+    except requests.ReadTimeout:
+        pass
+
     assert 'TERMED' in python_container.logs().decode()
