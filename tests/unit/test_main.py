@@ -19,7 +19,7 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.InputError')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         stub_environ = mocker.patch(
             'hostel_huptainer.__main__.os.environ',
             value=environ)
@@ -36,7 +36,7 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=InputError)
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         mock_abnormal_exit = mocker.patch(
             'hostel_huptainer.__main__.abnormal_exit')
 
@@ -55,7 +55,7 @@ class TestEnvironmentInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment',
                      side_effect=stub_error)
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         mock_error_message = mocker.patch(
             'hostel_huptainer.__main__.error_message')
 
@@ -72,7 +72,7 @@ class TestArgumentsInteractions(object):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers')
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         stub_argv = mocker.patch(
             'hostel_huptainer.__main__.sys.argv',
             value=argv)
@@ -92,7 +92,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment',
                      spec=Environment, hostname=hostname)
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         mock_matches = mocker.patch(
             'hostel_huptainer.__main__.MatchingContainers')
 
@@ -106,7 +106,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
                      side_effect=ContainerError)
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         mock_abnormal_exit = mocker.patch(
             'hostel_huptainer.__main__.abnormal_exit')
 
@@ -125,7 +125,7 @@ class TestMatchingContainersInteractions(object):
         mocker.patch('hostel_huptainer.__main__.Environment')
         mocker.patch('hostel_huptainer.__main__.MatchingContainers',
                      side_effect=stub_error)
-        mocker.patch('hostel_huptainer.__main__.sighup')
+        mocker.patch('hostel_huptainer.__main__.send_signal')
         mock_error_message = mocker.patch(
             'hostel_huptainer.__main__.error_message')
 
@@ -136,20 +136,42 @@ class TestMatchingContainersInteractions(object):
     @pytest.mark.parametrize('stub_matches', [
         [mock.MagicMock()],
         [mock.MagicMock(), mock.MagicMock(), mock.MagicMock()]])
-    def test_calls_sighup_on_each_item_of_returned_iterable(
+    def test_calls_send_signal_on_each_item_of_returned_iterable(
             self, mocker, stub_matches):
         mocker.patch('hostel_huptainer.__main__.os')
         mocker.patch('hostel_huptainer.__main__.sys')
         mocker.patch('hostel_huptainer.__main__.Arguments')
         mocker.patch('hostel_huptainer.__main__.Environment')
-        mock_sighup = mocker.patch('hostel_huptainer.__main__.sighup')
-
         stub_matching = mocker.patch(
             'hostel_huptainer.__main__.MatchingContainers')
         stub_matching.return_value.__iter__ = (
             lambda _: iter(stub_match for stub_match in stub_matches))
+        mock_send_signal = mocker.patch(
+            'hostel_huptainer.__main__.send_signal')
 
         main()
 
         for stub_match in stub_matches:
-            mock_sighup.assert_has_calls([mocker.call(stub_match)])
+            mock_send_signal.assert_has_calls([
+                mocker.call(mocker.ANY, stub_match)])
+
+    @pytest.mark.parametrize('signal_method', ['reload', 'restart'])
+    def test_sends_passed_signal_to_send_signal(
+            self, mocker, signal_method):
+        mocker.patch('hostel_huptainer.__main__.os')
+        mocker.patch('hostel_huptainer.__main__.sys')
+        mocker.patch('hostel_huptainer.__main__.Environment')
+        stub_arguments = mocker.patch(
+            'hostel_huptainer.__main__.Arguments')
+        stub_arguments.return_value.signal_method = signal_method
+        stub_matching = mocker.patch(
+            'hostel_huptainer.__main__.MatchingContainers')
+        stub_matching.return_value.__iter__ = (
+            lambda _: iter([mocker.MagicMock()]))
+        mock_send_signal = mocker.patch(
+            'hostel_huptainer.__main__.send_signal')
+
+        main()
+
+        mock_send_signal.assert_has_calls([
+            mocker.call(signal_method, mocker.ANY)])

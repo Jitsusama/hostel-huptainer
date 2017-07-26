@@ -13,9 +13,13 @@ def csv_contains_value(csv_list, value):
         item.strip() == value for item in item_list])
 
 
-def sighup(container):
-    """Send a SIGHUP kill signal to the passed container."""
-    container.kill(signal='SIGHUP')
+def send_signal(signal_method, container):
+    """Reload or restart the container."""
+    if signal_method == 'reload':
+        container.kill(signal='SIGHUP')
+
+    elif signal_method == 'restart':
+        container.restart()
 
 
 class MatchingContainers(object):

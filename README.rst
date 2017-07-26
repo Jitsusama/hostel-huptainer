@@ -24,14 +24,14 @@ That said, there are 3 ways that you can install this program;
 
       pip install .
 
-*  You can also use Docker to install/run this program. You can do this
-   like so when grabbing from the Docker Hub:
+*  You can also use a pre-built Docker image from the Docker Hub by
+   pulling the image like so:
 
    .. code-block:: bash
 
       docker pull jitsusama/hostel-huptainer
 
-*  Finally, you can build the image from a clone of the source
+*  Finally, you can build a Docker image from a clone of the source
    repository like so:
 
    .. code-block:: bash
@@ -50,16 +50,27 @@ program. With this in mind, I envision this program primarily being
 called by lets-do-dns via the ``LETS_DO_POSTCMD`` environment variable
 being passed to it.
 
-Here's an example of how you can use this program from the CLI directly
-when you installed the program via PIP:
+Locally Installed
++++++++++++++++++
+Here's an example of using this program directly:
 
 .. code-block:: bash
 
    CERTBOT_HOSTNAME=myhost.mydomain.com \
    hostel-huptainer
 
-Here's an example of how you can use this program from the CLI via
-certbot/lets-do-dns when you installed the program via PIP:
+By default hostel-huptainer will reload matching containers by sending
+them a SIGHUP signal. You can override this default by passing the
+``--signal`` or ``-s`` option and specifying either ``reload`` (SIGHUP)
+or ``restart`` (SIGINT followed by process relaunch) like so:
+
+.. code-block:: bash
+
+    CERTBOT_HOSTNAME=myhost.mydomain.com \
+    hostel-huptainer --signal restart
+
+Here's an example of how you can use this program via
+certbot/lets-do-dns:
 
 .. code-block:: bash
 
@@ -71,6 +82,19 @@ certbot/lets-do-dns when you installed the program via PIP:
        --manual-auth-hook lets-do-dns \
        --manual-cleanup-hook lets-do-dns
 
+When using via certbot/lets-do-dns, you can simply invoke certbot like
+so when performing a certificate renewal and it will call
+hostel-huptainer only when a renewal is required:
+
+.. code-block:: bash
+
+   DO_APIKEY=super-secret-key \
+   DO_DOMAIN=mydomain.com \
+   LETS_DO_POSTCMD=hostel-huptainer \
+   certbot renew
+
+Via Docker
+++++++++++
 Here's an example of how you can use this program from Docker when
 you pulled the image from the Docker Hub:
 
@@ -87,12 +111,18 @@ you pulled the image from the Docker Hub:
            --manual-auth-hook lets-do-dns \
            --manual-cleanup-hook lets-do-dns
 
-.. note::
+When using via certbot/lets-do-dns, you can simply invoke certbot like
+so when performing a certificate renewal and it will call
+hostel-huptainer only when a renewal is required:
 
-   In both of these circumstances, certbot would be providing the
-   ``CERTBOT_HOSTNAME`` environment variable based on the ``-d``
-   hostname supplied via its invocation. The ``lets-do-dns`` program
-   is programmed such that it will only call the passed
-   ``hostel-huptainer`` program during the manual-cleanup-hook stage.
+.. code-block:: bash
+
+   docker run -v "$(pwd)/my-cert-dir:/etc/letsencrypt" \
+       -v "/var/run/docker.sock:/var/run/docker.sock" \
+       -e "DO_APIKEY=super-secret-key" \
+       -e "DO_DOMAIN=mydomain.com" \
+       -e "LETS_DO_POSTCMD=hostel-huptainer" \
+       jitsusama/hostel-huptainer \
+       certbot renew
 
 .. _lets-do-dns: https://github.com/jitsusama/lets-do-dns
