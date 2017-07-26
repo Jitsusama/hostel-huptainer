@@ -1,3 +1,3 @@
-"""CLI program that selectively SIGHUPs Docker containers."""
+"""CLI program that selectively SIGHUPs/restarts Docker containers."""
 
-__version__ = '0.4.0'
+__version__ = '0.5.1'
